@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Security.Principal;
+using System.Security.Permissions;
 
 namespace PhantasmagoriaOfNetcode
 {
@@ -27,7 +29,7 @@ namespace PhantasmagoriaOfNetcode
             Console.WriteLine($"Version: {status?.VersionMajor}.{status.VersionMinor}.{status.VersionRev}");
             Console.WriteLine("Online: {0}", status.Online);
             Console.WriteLine("ZeroTier Address: {0}", status.Address);
-            Console.WriteLine("ZeroTier Oublic Identity: {0}", status.PublicIdentity);
+            Console.WriteLine("ZeroTier Public Identity: {0}", status.PublicIdentity);
             Console.WriteLine("Clock: {0}", status.Clock);
             #endif
             while (!status.Online)
@@ -38,7 +40,7 @@ namespace PhantasmagoriaOfNetcode
                 Console.WriteLine("Press any key to try again... or CTRL+C to terminate.");
                 Console.ReadKey();
             }
-            if (args[0] is not null)
+            if (args is not null)
             {
                 //Client Stuff
             } else
