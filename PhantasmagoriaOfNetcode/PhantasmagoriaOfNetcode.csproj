@@ -4,10 +4,15 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>net5.0</TargetFramework>
     <ApplicationManifest>app.manifest</ApplicationManifest>
+    <UserSecretsId>ac59184d-c31b-422c-9873-2dc0382eaf02</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="LibZeroTier" Version="1.0.8" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Discord.GameSDK\Discord.GameSDK.csproj" />
   </ItemGroup>
 
 </Project>

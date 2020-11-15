@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Security.Principal;
-using System.Security.Permissions;
+using Discord.GameSDK;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace PhantasmagoriaOfNetcode
 {
     class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             Console.Title = "Phantasmagoria of Netcode";
             Console.WriteLine("Grabbing ZeroTier Data...");
@@ -40,6 +41,33 @@ namespace PhantasmagoriaOfNetcode
                 Console.WriteLine("Press any key to try again... or CTRL+C to terminate.");
                 Console.ReadKey();
             }
+            Console.WriteLine("Initialising Discord...");
+            Discord.GameSDK.Discord discord = new Discord.GameSDK.Discord(777469694357143552, (ulong)CreateFlags.Default);
+            discord.Init();
+            Discord.GameSDK.Activities.ActivityManager activityManager = discord.GetActivityManager();
+            discord.SetLogHook(LogLevel.Debug, LogProblemsFunction);
+            Discord.GameSDK.Activities.Activity activity = new Discord.GameSDK.Activities.Activity{
+                Party = new Discord.GameSDK.Activities.ActivityParty
+                {
+                    Id = status.Address,
+                    Size = new Discord.GameSDK.Activities.PartySize{
+                        CurrentSize = 1,
+                        MaxSize = 2
+                    }
+                },
+                Instance = true,
+                State = "Initializing..."
+            };
+            activityManager.UpdateActivity(activity, (result) =>
+            {
+                #if DEBUG
+                Console.WriteLine("Updating Activity: {0}", result);
+                #endif
+                });
+            CancellationTokenSource cts = new CancellationTokenSource();
+            Task task = UpdateDiscord(discord, cts.Token);
+            cts.Token.Register(discord.Dispose);
+            Console.WriteLine("Init Done");
             if (args is not null)
             {
                 //Client Stuff
@@ -47,7 +75,26 @@ namespace PhantasmagoriaOfNetcode
             {
                
             }
-            
+            await Task.Run(Console.ReadKey);
+            cts.Cancel();
+        }
+        public static void LogProblemsFunction(LogLevel level, string message)
+        {
+            Console.WriteLine("Discord:{0} - {1}", level, message);
+        }
+
+        public static async Task UpdateDiscord(Discord.GameSDK.Discord discord, CancellationToken cancellationToken)
+        {
+            while(true)
+            {
+                discord.RunCallbacks();
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    return;
+                }
+
+                await Task.Yield();
+            }
         }
     }
 }
