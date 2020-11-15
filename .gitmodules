@@ -1,0 +1,3 @@
+[submodule "Discord.GameSDKCSharp"]
+	path = Discord.GameSDKCSharp
+	url = git@github.com:Voltstro-Studios/Discord.GameSDKCSharp.git
