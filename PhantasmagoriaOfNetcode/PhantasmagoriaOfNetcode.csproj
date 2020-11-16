@@ -8,11 +8,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="LibZeroTier" Version="1.0.8" />
+    <PackageReference Include="InputSimulatorCore" Version="1.0.5" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Discord.GameSDK\Discord.GameSDK.csproj" />
+    <ProjectReference Include="..\LibZeroTier\LibZeroTier.csproj" />
   </ItemGroup>
 
 </Project>

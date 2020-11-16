@@ -4,6 +4,7 @@ using System.Text.Json.Serialization;
 using Discord.GameSDK;
 using System.Threading.Tasks;
 using System.Threading;
+using System.Diagnostics;
 
 namespace PhantasmagoriaOfNetcode
 {
@@ -58,12 +59,7 @@ namespace PhantasmagoriaOfNetcode
                 Instance = true,
                 State = "Initializing..."
             };
-            activityManager.UpdateActivity(activity, (result) =>
-            {
-                #if DEBUG
-                Console.WriteLine("Updating Activity: {0}", result);
-                #endif
-                });
+            activityManager.UpdateActivity(activity, WriteActivityResponse);
             CancellationTokenSource cts = new CancellationTokenSource();
             Task task = UpdateDiscord(discord, cts.Token);
             cts.Token.Register(discord.Dispose);
@@ -72,9 +68,50 @@ namespace PhantasmagoriaOfNetcode
             {
                 //Client Stuff
             } else
-            {
-               
+            {   
+                Console.WriteLine("Welcome to Phantasmgaoria of Netplay!");
+                Console.WriteLine("If you're seeing this message, that means everything should be set up correctly, except with maybe the typical adonis stuff.");
+                WriteInputKey('d');
+                Console.WriteLine("If a problem arises with adonis don't be afraid to ask in the PoFV Netplay Discord Server.");
+                WriteInputKey('h');
+                Console.WriteLine("You can select to start hosting and afterward Invite people trough Discord or other people can Ask to Join.");
+                WriteInputKey('c');
+                Console.WriteLine("You can also select Client mode, which just puts this application readying to throw you into the game, once your Ask to Join request gets accepted or you click on an Invite in Discord.");
+                WriteInputKey('e');
+                Console.WriteLine("You can also just exit.");
+                ConsoleKeyInfo key;
+                bool b = false;
+                do
+                {
+                    key = Console.ReadKey();
+                    b = !(key.Key is ConsoleKey.D or ConsoleKey.H or ConsoleKey.C or ConsoleKey.E);
+                    if (b)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("Invalid key press! Your only options are d,h,c,e.");
+                        Console.ResetColor();
+                    }
+                } while(b);
+                switch (key.Key)
+                {
+                    case ConsoleKey.D:
+                    {
+                        //Simplistic protection method against invite scrapers on Github if they exist.
+                        Process.Start("https://" + "discord.gg" + "/2QPPPpE");
+                        break;
+                    }
+                    case ConsoleKey.H:
+                    {
+                        break;
+                    }
+                    case ConsoleKey.C:
+                    {
+                        break;
+                    }
+                    default: break;
+                }
             }
+            Console.WriteLine("Press any key to close");
             await Task.Run(Console.ReadKey);
             cts.Cancel();
         }
@@ -95,6 +132,24 @@ namespace PhantasmagoriaOfNetcode
 
                 await Task.Yield();
             }
+        }
+
+        private static void WriteInputKey(char c)
+        {
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.Write('[');
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.Write(c);
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.Write("] ");
+            Console.ResetColor();
+        }
+
+        public static void WriteActivityResponse(Result result)
+        {
+             #if DEBUG
+                Console.WriteLine("Updating Activity: {0}", result);
+             #endif
         }
     }
 }
