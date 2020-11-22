@@ -410,22 +410,26 @@ namespace LibZeroTier
             });
         }
 
-        public delegate void PeersCallback(List<ZeroTierPeer> peers);
-
-        public void GetPeers(PeersCallback cb)
+        /// <summary>
+        /// Returns the current peers you're connected to.
+        /// </summary>
+        /// <returns>List of ZeroTierPeer objects</returns>
+        public List<ZeroTierPeer> GetPeers()
         {
             var request = WebRequest.Create(url + "/peer" + "?auth=" + authtoken) as HttpWebRequest;
             if (request == null)
             {
-                cb(null);
+                throw new LibZeroTierException("ZeroTier Request Response Emtpy");
             }
 
             request.Method = "GET";
             request.ContentType = "application/json";
+            request.Timeout = 10000;
 
             try
             {
                 var httpResponse = (HttpWebResponse)request.GetResponse();
+
                 if (httpResponse.StatusCode == HttpStatusCode.OK)
                 {
                     using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
@@ -441,7 +445,7 @@ namespace LibZeroTier
                         {
                             Console.WriteLine(e.ToString());
                         }
-                        cb(peerList);
+                        return peerList;
                     }
                 }
                 else if (httpResponse.StatusCode == HttpStatusCode.Unauthorized)
@@ -451,7 +455,7 @@ namespace LibZeroTier
             }
             catch (System.Net.Sockets.SocketException)
             {
-                cb(null);
+                throw new LibZeroTierException("ZeroTier Request Response Empty");
             }
             catch (System.Net.WebException e)
             {
@@ -462,9 +466,10 @@ namespace LibZeroTier
                 }
                 else
                 {
-                    cb(null);
+                    throw new LibZeroTierException("ZeroTier Request Response Empty");
                 }
             }
+            return null;
         }
 
         public string NodeAddress()
